@@ -1,0 +1,11 @@
+{
+  "model": {
+    "class": "MarginalizedToyModel"
+  },
+  "sampler": {
+    "nsamples": 100,
+    "nparticles": 30
+  },
+  "input": "input/toy_model.json",
+  "ouptut": "output/marginalized_toy_model.json"
+}

@@ -1,0 +1,23 @@
+{
+  "name": "Untitled",
+  "version": "0.0.0",
+  "description": "",
+  "manifest": {
+    "source": [
+	    "bi/model/ToyModel.bi",
+	    "bi/model/MarginalizedToyModel.bi",
+	    "bi/delay/DelayGeneralizedStudent.bi",
+	    "bi/distribution/GeneralizedStudent.bi"
+    ],
+    "data": [
+      "input/toy_model.json"
+    ],
+    "other": [
+      "LICENSE",
+      "META.json",
+      "README.md",
+      "config/toy_model.json",
+      "config/marginalized_toy_model.json"
+    ]
+  }
+}
