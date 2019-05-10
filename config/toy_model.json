@@ -1,9 +1,10 @@
 {
 	"model": {
-		"class": "MarginalizedToyModel"
+		"class": "ToyModel"
 	},
   "sampler": {
-    "nsamples": 100,
+    "sampler": "ParticleGibbs",
+    "nsamples": 20,
     "nparticles": 30
   }
 }

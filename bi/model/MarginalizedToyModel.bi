@@ -36,7 +36,7 @@ class MarginalizedToyModel < StateSpaceModel<MarginalizedToyModelParameter, Marg
     auto σ <- -2*x.χx / ν; // Scale
 
     // Propagate
-    x'.x ~ GeneralizedStudent(ν, μ, σ);
+    x'.x ~ Student(ν, μ, σ);
 
     // Update statistics for the next state
     x'.χx <- x.χx -pow(x'.x - μ, 2)/2;
@@ -51,12 +51,9 @@ class MarginalizedToyModel < StateSpaceModel<MarginalizedToyModelParameter, Marg
     auto ν <- x.νy + 2; // Degrees of freedom
     μ:Real <- x.x*x.x/20.0; // Mean
     auto σ2 <- -2*x.χy / ν; // Scale
-    //stdout.print(x.t);
-    //stdout.print("\n");
-    //stdout.print(σ2);
 
     // Observe
-    y ~ GeneralizedStudent(ν, μ, σ2);
+    y ~ Student(ν, μ, σ2);
 
     // Update statistics
     x.χy <- x.χy - pow(y - μ, 2)/2;
