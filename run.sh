@@ -1,1 +1,3 @@
-birch sample --config=config/toy_model.json --input=input/toy_model.json --output=output/toy_model.json
+birch sample --config=config/toy_model_pf.json
+birch sample --config=config/toy_model_csmc.json
+birch sample --config=config/toy_model_pgibbs.json

@@ -13,17 +13,17 @@ class ToyModelParameter {
   σ2_y:Random<Real>;
 
   function write(buffer:Buffer) {
-    buffer.set("sigma2_x", σ2_x);
-    buffer.set("sigma2_y", σ2_y);
+    buffer.set("sigma_x", sqrt(σ2_x));
+    buffer.set("sigma_y", sqrt(σ2_y));
   }
 }
 
 class ToyModel < StateSpaceModel<ToyModelParameter, ToyModelState, Random<Real>> {
-  αx:Real <- 2.01;
-  βx:Real <- 10.01;
+  αx:Real <- 2.0;
+  βx:Real <- 10.0;
 
-  αy:Real <- 2.01;
-  βy:Real <- 10.01;
+  αy:Real <- 2.0;
+  βy:Real <- 10.0;
 
   fiber parameter(θ:ToyModelParameter) -> Event {
     θ.σ2_x ~ InverseGamma(αx, βx);
