@@ -6,9 +6,6 @@
     "source": [
 	    "bi/model/ToyModel.bi"
     ],
-    "data": [
-	    "input/toy_model.json"
-    ],
     "other": [
       "LICENSE",
       "META.json",

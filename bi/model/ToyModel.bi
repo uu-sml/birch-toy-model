@@ -13,8 +13,8 @@ class ToyModelParameter {
   σ2_y:Random<Real>;
 
   function write(buffer:Buffer) {
-    buffer.set("sigma_x", sqrt(σ2_x));
-    buffer.set("sigma_y", sqrt(σ2_y));
+    buffer.set("sigma_x", σ2_x);
+    buffer.set("sigma_y", σ2_y);
   }
 }
 
