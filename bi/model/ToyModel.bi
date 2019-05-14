@@ -36,9 +36,9 @@ class ToyModel < StateSpaceModel<ToyModelParameter, ToyModelState, Random<Real>>
   }
 
   fiber transition(x':ToyModelState, x:ToyModelState, θ:ToyModelParameter) -> Event {
-    auto μ <- x.x/2 + 25*x.x/(1.0 + x.x*x.x) + 8.0*cos(1.2*x.t);
-    x'.x ~ Gaussian(μ, θ.σ2_x);
     x'.t <- x.t + 1;
+    auto μ <- x.x/2 + 25*x.x/(1.0 + x.x*x.x) + 8.0*cos(1.2*x'.t);
+    x'.x ~ Gaussian(μ, θ.σ2_x);
   }
 
   fiber observation(y:Random<Real>, x:ToyModelState, θ:ToyModelParameter) -> Event {
