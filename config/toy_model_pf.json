@@ -4,8 +4,8 @@
   },
   "sampler": {
     "class": "ParticleFilter",
-    "nsamples": 3000,
-    "nparticles": 200
+    "nsamples": 100,
+    "nparticles": 50
   },
   "seed": 1234,
   "input": "input/observation_data.json",
