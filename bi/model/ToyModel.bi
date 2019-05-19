@@ -18,7 +18,7 @@ class ToyModelParameter {
   }
 }
 
-class ToyModel < StateSpaceModel<ToyModelParameter, ToyModelState, Random<Real>> {
+class ToyModel < HMMWithProposal<ToyModelParameter, ToyModelState, Random<Real>> {
   αx:Real <- 2.0;
   βx:Real <- 10.0;
 
@@ -45,4 +45,28 @@ class ToyModel < StateSpaceModel<ToyModelParameter, ToyModelState, Random<Real>>
     μ:Real <- x.x*x.x/20.0;
     y ~ Gaussian(μ, θ.σ2_y);
   }
-}
+
+  function propose(x:ForwardModel) -> (Real, Real) {
+
+    auto x_old <- (HMMWithProposal<ToyModelParameter, ToyModelState, Random<Real>>?(x))!;
+
+    auto θ_old <- x_old.θ; // Parameter from previous model
+    
+    auto σ2 <- 0.15;
+
+    auto Q_x_old <- Normal(θ_old.σ2_x, σ2); // q(θ' | θ)
+    θ.σ2_x <- Q_x_old.simulate(); // Draw new parameter for this model
+    auto q_x <- Q_x_old.observe(θ.σ2_x);  // log q(θ | θ') (new given old)
+    auto Q_x_new <- Normal(θ.σ2_x, σ2); // q(θ' | θ) 
+    auto q_x_old <- Q_x_new.observe(θ_old.σ2_x); // log q(θ | θ') (old given new)
+
+
+    auto Q_y_old <- Normal(θ_old.σ2_y, σ2); // q(θ' | θ)
+    θ.σ2_y <- Q_y_old.simulate(); // Draw new parameter for this model
+    auto q_y <- Q_y_old.observe(θ.σ2_y);  // log q(θ | θ') (new given old)
+    auto Q_y_new <- Normal(θ.σ2_y, σ2); // q(θ' | θ) 
+    auto q_y_old <- Q_y_new.observe(θ_old.σ2_y); // log q(θ | θ') (old given new)
+
+    return (q_x+q_y, q_x_old+q_y_old);
+  }
+} 
