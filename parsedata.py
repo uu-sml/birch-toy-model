@@ -14,11 +14,14 @@ with open("output/toy_pf.json") as f:
 with open("output/toy_pgibbs.json") as f:
     data_pgibbs = json.load(f)
 
-with open("output/toy_pgas.json") as f:
-    data_pgas = json.load(f)
+# with open("output/toy_pgas.json") as f:
+#     data_pgas = json.load(f)
 
 with open("output/toy_csmc.json") as f:
     data_csmc = json.load(f)
+
+with open("output/toy_pmmh.json") as f:
+    data_pmmh = json.load(f)
 
 # Each entry is a Dict with
 # - "lweight" : weights
@@ -63,16 +66,20 @@ s2x_pg = [data["θ"]["sigma_x"] for data in data_pgibbs[2:-1]]
 s2y_pg = [data["θ"]["sigma_y"] for data in data_pgibbs[2:-1]]
 
 # Load the data for the Birch PG
-s2x_pgas = [data["θ"]["sigma_x"] for data in data_pgas[2:-1]]
-s2y_pgas = [data["θ"]["sigma_y"] for data in data_pgas[2:-1]]
+s2x_pg = [data["θ"]["sigma_x"] for data in data_pmmh[2:-1]]
+s2y_pg = [data["θ"]["sigma_y"] for data in data_pmmh[2:-1]]
+
+# Load the data for the Birch PG
+#s2x_pgas = [data["θ"]["sigma_x"] for data in data_pgas[2:-1]]
+#s2y_pgas = [data["θ"]["sigma_y"] for data in data_pgas[2:-1]]
 
 (figure, axes) = plt.subplots(2, 1)
 
 axes[0].plot(s2, s2x_pf)
 axes[0].hist(s2x_pg, bins=20, density=1)
-axes[0].hist(s2x_pgas, bins=20, density=1)
+#axes[0].hist(s2x_pgas, bins=20, density=1)
 axes[1].plot(s2, s2y_pf)
 axes[1].hist(s2y_pg, bins=20, density=1)
-axes[1].hist(s2y_pgas, bins=20, density=1)
+#axes[1].hist(s2y_pgas, bins=20, density=1)
 
 plt.show()
