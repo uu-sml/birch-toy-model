@@ -66,8 +66,8 @@ s2x_pg = [data["θ"]["sigma_x"] for data in data_pgibbs[2:-1]]
 s2y_pg = [data["θ"]["sigma_y"] for data in data_pgibbs[2:-1]]
 
 # Load the data for the Birch PG
-s2x_pg = [data["θ"]["sigma_x"] for data in data_pmmh[2:-1]]
-s2y_pg = [data["θ"]["sigma_y"] for data in data_pmmh[2:-1]]
+s2x_pmmh = [data["θ"]["sigma2_x"] for data in data_pmmh[2:-1]]
+s2y_pmmh = [data["θ"]["sigma2_y"] for data in data_pmmh[2:-1]]
 
 # Load the data for the Birch PG
 #s2x_pgas = [data["θ"]["sigma_x"] for data in data_pgas[2:-1]]
@@ -77,9 +77,10 @@ s2y_pg = [data["θ"]["sigma_y"] for data in data_pmmh[2:-1]]
 
 axes[0].plot(s2, s2x_pf)
 axes[0].hist(s2x_pg, bins=20, density=1)
-#axes[0].hist(s2x_pgas, bins=20, density=1)
+axes[0].hist(s2x_pmmh, bins=20, density=1)
 axes[1].plot(s2, s2y_pf)
 axes[1].hist(s2y_pg, bins=20, density=1)
+axes[1].hist(s2y_pmmh, bins=20, density=1)
 #axes[1].hist(s2y_pgas, bins=20, density=1)
 
 plt.show()

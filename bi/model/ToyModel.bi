@@ -52,7 +52,7 @@ class ToyModel < HMMWithProposal<ToyModelParameter, ToyModelState, Random<Real>>
 
     auto θ_old <- x_old.θ; // Parameter from previous model
     
-    auto σ2 <- 0.15;
+    auto σ2 <- 0.25;
 
     auto Q_x_old <- Normal(θ_old.σ2_x, σ2); // q(θ' | θ)
     θ.σ2_x <- Q_x_old.simulate(); // Draw new parameter for this model
