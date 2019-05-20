@@ -60,6 +60,8 @@ s2 = np.linspace(2.0, 25.0, 200) # variance
 s2x_pf, s2y_pf = plot_inverse_gamma(data_pf, s2)
 s2x_csmc, s2y_csmc = plot_inverse_gamma(data_csmc, s2)
 
+prior = invgamma.pdf(s2, 0.01, 0.01)
+
 
 # Load the data for the Birch PG
 s2x_pg = [data["θ"]["sigma_x"] for data in data_pgibbs[2:-1]]

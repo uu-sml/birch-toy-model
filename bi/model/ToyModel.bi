@@ -19,11 +19,11 @@ class ToyModelParameter {
 }
 
 class ToyModel < HMMWithProposal<ToyModelParameter, ToyModelState, Random<Real>> {
-  αx:Real <- 2.0;
-  βx:Real <- 10.0;
+  αx:Real <- 0.01;
+  βx:Real <- 0.01;
 
-  αy:Real <- 2.0;
-  βy:Real <- 10.0;
+  αy:Real <- 0.01;
+  βy:Real <- 0.01;
 
   fiber parameter(θ:ToyModelParameter) -> Event {
     θ.σ2_x ~ InverseGamma(αx, βx);
@@ -52,7 +52,7 @@ class ToyModel < HMMWithProposal<ToyModelParameter, ToyModelState, Random<Real>>
 
     auto θ_old <- x_old.θ; // Parameter from previous model
     
-    auto σ2 <- 0.25;
+    auto σ2 <- 0.15;
 
     auto Q_x_old <- Normal(θ_old.σ2_x, σ2); // q(θ' | θ)
     θ.σ2_x <- Q_x_old.simulate(); // Draw new parameter for this model
