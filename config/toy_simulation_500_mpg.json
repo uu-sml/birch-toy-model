@@ -5,9 +5,9 @@
   "sampler": {
     "class": "ConditionalParticleFilter",
     "nsamples": 10000,
-    "nparticles": 200
+    "nparticles": 500
   },
   "seed": 1234,
-  "input": "input/observation_data.json",
-  "output": "output/toy_csmc.json"
+  "input": "input/simulation_data.json",
+  "output": "output/toy_simulation_500_mpg.json"
 }

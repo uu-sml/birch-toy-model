@@ -3,11 +3,11 @@
     "class": "ToyModel"
   },
   "sampler": {
-    "class": "ParticleGibbs",
+    "class": "ConditionalParticleFilter",
     "nsamples": 10000,
     "nparticles": 200
   },
   "seed": 1234,
   "input": "input/observation_data.json",
-  "output": "output/toy_pgibbs.json"
+  "output": "output/toy_mpg.json"
 }
