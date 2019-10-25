@@ -19,11 +19,11 @@ class ToyModelParameter {
 }
 
 class ToyModel < StateSpaceModel<ToyModelParameter, ToyModelState, Random<Real>> {
-  αx:Real <- 2.0;
-  βx:Real <- 10.0;
+  αx:Real <- 1.0;
+  βx:Real <- 1.0;
 
-  αy:Real <- 2.0;
-  βy:Real <- 10.0;
+  αy:Real <- 1.0;
+  βy:Real <- 1.0;
 
   fiber parameter(θ:ToyModelParameter) -> Event {
     θ.σ2_x ~ InverseGamma(αx, βx);
@@ -32,7 +32,7 @@ class ToyModel < StateSpaceModel<ToyModelParameter, ToyModelState, Random<Real>>
 
   fiber initial(x:ToyModelState, θ:ToyModelParameter) -> Event {
     x.x ~ Gaussian(0.0, 25.0);
-    x.t <- 0;
+    x.t <- 1;
   }
 
   fiber transition(x':ToyModelState, x:ToyModelState, θ:ToyModelParameter) -> Event {

@@ -4,10 +4,10 @@
   },
   "sampler": {
     "class": "ConditionalParticleFilter",
-    "nsamples": 10000,
+    "nsamples": 5000,
     "nparticles": 50
   },
-  "seed": 1234,
+  "seed": 1337,
   "input": "input/simulation_data.json",
   "output": "output/toy_simulation_50_mpg.json"
 }

@@ -8,88 +8,29 @@ import scipy.stats
 
 from scipy.stats import invgamma
 
-
-# Parameters
-burnin = 100
-input_folder = "output/"
-file_mpgas = input_folder + "toy_mpgas.json"
-file_pgas = input_folder + "toy_pgas.json"
-file_mpg = input_folder + "toy_mpg.json"
-#file_mpg = input_folder + "toy_simulation_50_mpg.json"
-file_pg = input_folder + "toy_pg.json"
-#file_pg = input_folder + "toy_simulation_50_pg.json"
-autocorr_file = "data/autocorr_toy_model.csv"
-
-
-# Load pgibbs data
-s2x_pg = []
-s2y_pg = []
-with open(file_pg, "r") as f:
-    data = json.load(f)
-    a = 0
-    for i, d in enumerate(data[burnin:-1]):
-        if i == 0:
-            prev = np.array([x["x"] for x in d["x"]])
-        else:
-            curr = np.array([x["x"] for x in d["x"]])
-            a += prev == curr
-            prev = curr
-        s2x_pg.append(d["θ"]["sigma_x"])
-        s2y_pg.append(d["θ"]["sigma_y"])
-    updatefreq_pg = 1 - a/(len(data) - burnin)
-
-s2x_pgas = []
-s2y_pgas = []
-with open(file_pgas, "r") as f:
-    data = json.load(f)
-    a = 0
-    for i,d in enumerate(data[burnin:-1]):
-        if i == 0:
-            prev = np.array([x["x"] for x in d["x"]])
-        else:
-            curr = np.array([x["x"] for x in d["x"]])
-            a += prev == curr
-            prev = curr
-        s2x_pgas.append(d["θ"]["sigma_x"])
-        s2y_pgas.append(d["θ"]["sigma_y"])
-    updatefreq_pgas = 1 - a/(len(data) - burnin)
-
-# Load mpgibbs data
-s2x_mpg = []
-s2y_mpg = []
-with open(file_mpg, "r") as f:
-    data = json.load(f)
-    a = 0
-    for i,d in enumerate(data[burnin:-1]):
-        if i == 0:
-            prev = np.array([x["x"] for x in d["x"]])
-        else:
-            curr = np.array([x["x"] for x in d["x"]])
-            a += prev == curr
-            prev = curr
-        sigma2x = d["θ"]["sigma_x"]  # Careful!
-        sigma2y = d["θ"]["sigma_y"]  # Careful!
-        s2x_mpg.append(invgamma.rvs(sigma2x["α"], scale=sigma2x["β"]))
-        s2y_mpg.append(invgamma.rvs(sigma2y["α"], scale=sigma2y["β"]))
-    updatefreq_mpg = 1 - a/(len(data) - burnin)
-
-s2x_mpgas = []
-s2y_mpgas = []
-with open(file_mpgas, "r") as f:
-    data = json.load(f)
-    a = 0
-    for i,d in enumerate(data[burnin:-1]):
-        if i == 0:
-            prev = np.array([x["x"] for x in d["x"]])
-        else:
-            curr = np.array([x["x"] for x in d["x"]])
-            a += prev == curr
-            prev = curr
-        sigma2x = d["θ"]["sigma_x"]  # Careful!
-        sigma2y = d["θ"]["sigma_y"]  # Careful!
-        s2x_mpgas.append(invgamma.rvs(sigma2x["α"], scale=sigma2x["β"]))
-        s2y_mpgas.append(invgamma.rvs(sigma2y["α"], scale=sigma2y["β"]))
-    updatefreq_mpgas = 1 - a/(len(data) - burnin)
+def load_data(filename, burnin=50):
+    s2x = []
+    s2y = []
+    with open(filename, 'r') as f:
+        data = json.load(f)
+        a = 0
+        for i, d in enumerate(data[burnin:-1]):
+            if i == 0:
+                prev = np.array([x["x"] for x in d["x"]])
+            else:
+                curr = np.array([x["x"] for x in d["x"]])
+                a += prev == curr
+                prev = curr
+            if isinstance(d["θ"]["sigma_x"], dict):
+                sigma2x = d["θ"]["sigma_x"]
+                sigma2y = d["θ"]["sigma_y"]
+                s2x.append(invgamma.rvs(sigma2x["α"], scale=sigma2x["β"]))
+                s2y.append(invgamma.rvs(sigma2y["α"], scale=sigma2y["β"]))
+            else:
+                s2x.append(d["θ"]["sigma_x"])
+                s2y.append(d["θ"]["sigma_y"])
+        updatefreq = 1 - a/(len(data) - burnin)
+    return s2x, s2y, updatefreq
 
 
 def corr(x, n_lags):
@@ -103,140 +44,47 @@ def corr(x, n_lags):
     autocorr /= autocorr[0]
     return autocorr
 
-
-print(len(s2x_pg))
-print(len(s2x_pgas))
-print(len(s2x_mpgas))
-print(len(s2x_mpg))
-
-n_lags = 100
-corr_s2x_pg = corr(s2x_pg, n_lags)
-corr_s2x_pgas = corr(s2x_pgas, n_lags)
-corr_s2x_mpg = corr(s2x_mpg, n_lags)
-corr_s2x_mpgas = corr(s2x_mpgas, n_lags)
-corr_s2y_pg = corr(s2y_pg, n_lags)
-corr_s2y_pgas = corr(s2y_pgas, n_lags)
-corr_s2y_mpg = corr(s2y_mpg, n_lags)
-corr_s2y_mpgas = corr(s2y_mpgas, n_lags)
-
-
-
-# PLOTTING
-def updatefreqplot():
-    plt.plot(updatefreq_pg)
-    plt.plot(updatefreq_pgas)
-    plt.plot(updatefreq_mpg)
-    plt.plot(updatefreq_mpgas)
-    plt.legend(["PG","PGAS","mPG","mPGAS"])
-    #plt.legend(["PG","mPG"])
-    plt.savefig('updatefreq_toy_model.png')
-    plt.show()
-
-def autocorrplot():
-
-    fig, (ax1, ax2) = plt.subplots(1, 2)
-
-    ax1.plot(corr_s2x_pg)
-    ax1.plot(corr_s2x_pgas)
-    ax1.plot(corr_s2x_mpg)
-    ax1.plot(corr_s2x_mpgas)
-    ax1.set_xlabel("Lag")
-    ax1.set_ylabel("Sigma2 x")
-    ax1.legend(["PG", "mPG", "PGAS", "mPGAS"])
-    #ax1.legend(["PG", "mPG"])
-
-    ax2.plot(corr_s2y_pg)
-    ax2.plot(corr_s2y_pgas)
-    ax2.plot(corr_s2y_mpg)
-    ax2.plot(corr_s2y_mpgas)
-    ax2.set_xlabel("Lag")
-    ax2.set_ylabel("Sigma2 y")
-    ax2.legend(["PG", "mPG", "PGAS", "mPGAS"])
-    #ax2.legend(["PG", "mPG"])
-    plt.title("Toy model")
-
-    plt.savefig("autocorr_toy_model.png")
-
-    plt.show()
-
-
-def traceplot():
-    fig , (ax1, ax2) = plt.subplots(2,1)
-    ax1.plot(s2x_pg)
-    ax1.plot(s2x_mpg)
-    ax1.plot(s2x_pgas)
-    ax1.plot(s2x_mpgas)
-    ax1.legend(["PG","mPG", "PGAS", "mPGAS"])
-
-    ax2.plot(s2y_pg)
-    ax2.plot(s2y_mpg)
-    ax2.plot(s2y_pgas)
-    ax2.plot(s2y_mpgas)
-    ax2.legend(["PG","mPG", "PGAS", "mPGAS"])
-
-    plt.savefig("traces_toy_model.png")
-    plt.show()
-
-
-def histogramplot():
-    #fig, (ax1, ax2, ax3, ax4) = plt.subplots(4,2)
-
-    fig, (ax1, ax2) = plt.subplots(1,2)
-    ax1.hist(s2x_pg, alpha=0.5)
-    ax1.hist(s2x_mpg, alpha=0.5)
-    ax1.hist(s2x_pgas, alpha=0.5)
-    ax1.hist(s2x_mpgas, alpha=0.5)
-    ax1.legend(["PG","mPG", "PGAS", "mPGAS"])
-
-    ax2.hist(s2y_pg, alpha=0.5)
-    ax2.hist(s2y_mpg, alpha=0.5)
-    ax2.hist(s2y_pgas, alpha=0.5)
-    ax2.hist(s2y_mpgas, alpha=0.5)
-    ax2.legend(["PG","mPG", "PGAS", "mPGAS"])
-    #plt.hist(s2x_mpgas, alpha=0.5)
-    # ax2.hist(s2y_pg)
-    # ax2.hist(s2y_mpg)
-    # ax2.legend(["PG","mPG"])
-    # ax2.sel_xlabel("s2y")
-    # ax2.hist(s2y_pg)
-    # ax3.hist(s2x_pgas)
-    # ax3.hist(s2x_mpgas)
-    # ax3.legend(["PGAS","mPGAS"])
-    # ax3.sel_xlabel("s2x")
-    # ax4.hist(s2y_pgas)
-    # ax4.hist(s2y_mpgas)
-    # ax4.sel_xlabel("s2y")
-    # ax4.legend(["PGAS","mPGAS"])
-    plt.savefig("histograms_toy_model.png")
-    plt.show()
-
-
-def save():
-
-    with open(autocorr_file, "w") as csv_file:
-        writer = csv.writer(csv_file, delimiter=',')
-        writer.writerow(["lag",
-                         "s2x_PG",
-                         "s2x_PGAS",
-                         "s2x_mPG",
-                         "s2x_mPGAS",
-                         "s2y_PG",
-                         "s2y_mPG",
-                         "s2y_PGAS",
-                         "s2y_mPGAS"])
-        writer.writerows(zip(range(n_lags),
-                             corr_s2x_pg,
-                             corr_s2x_pgas,
-                             corr_s2x_mpg,
-                             corr_s2x_mpgas,
-                             corr_s2y_pg,
-                             corr_s2y_pgas,
-                             corr_s2y_mpg,
-                             corr_s2y_mpgas))
-
+import multiprocessing as mp
 
 if __name__ == "__main__":
-    updatefreqplot()
-    histogramplot()
-    traceplot()
-    autocorrplot()
+
+    input_folder = "output/"
+    file_mpg_50 = input_folder + "toy_simulation_50_mpg.json"
+    file_pg_50 = input_folder + "toy_simulation_50_pg.json"
+    file_mpg_500 = input_folder + "toy_simulation_50_mpgas.json"
+    file_pg_500 = input_folder + "toy_simulation_50_pgas.json"
+
+    files = [file_mpg_50, file_pg_50, file_mpg_500, file_pg_500]
+
+    with mp.Pool(mp.cpu_count()) as pool:
+        mpg_50, pg_50, mpg_500, pg_500 = pool.map(load_data, files)
+
+    fig, axes = plt.subplots(1,4)
+    for data, label, ax in zip([mpg_50, pg_50, mpg_500, pg_500], ['mPG 50', 'PG 50', 'mPGAS 50', 'PGAS 50'], axes):
+        ax.hist(data[0], alpha=0.5, density=True, label=label)
+        ax.hist(data[1], alpha=0.5, density=True, label=label)
+        ax.plot([10.0, 10.0], [0.0, 1.0])
+        ax.plot([1.0, 1.0], [0.0, 1.0])
+        ax.legend()
+    plt.savefig('histograms_toy_simulation.png')
+    plt.show()
+
+    fig, axes = plt.subplots(4,1)
+    for data, label, ax in zip([mpg_50, pg_50, mpg_500, pg_500], ['mPG 50', 'PG 50', 'mPGAS 50', 'PG 50'], axes):
+        ax.plot(data[0], label=label)
+        ax.plot(data[1], label=label)
+        ax.plot([0.0, 10000.0], [10.0, 10.0])
+        ax.plot([0.0, 10000.0], [1.0, 1.0] )
+        ax.legend()
+    plt.savefig('traces_toy_simulation.png')
+    plt.show()
+
+    fig, axes = plt.subplots(4,1)
+    for data, label, ax in zip([mpg_50, pg_50, mpg_500, pg_500], ['mPG 50', 'PG 50', 'mPGAS 50', 'PGAS 50'], axes):
+        corrx = corr(data[0], 40)
+        corry = corr(data[1], 40)
+        ax.plot(corrx, label=label)
+        ax.plot(corry, label=label)
+        ax.legend()
+    plt.savefig('autocorr_toy_simulations.png')
+    plt.show()
