@@ -4,7 +4,7 @@
   "description": "",
   "manifest": {
     "source": [
-	    "bi/model/ToySimulation.bi"
+	    "bi/model/ToyModel.bi"
     ],
     "other": [
       "LICENSE",

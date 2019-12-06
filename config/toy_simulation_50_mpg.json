@@ -2,10 +2,12 @@
   "model": {
     "class": "ToyModel"
   },
-  "sampler": {
-    "class": "ConditionalParticleFilter",
-    "nsamples": 5000,
+  "filter": {
     "nparticles": 50
+  },
+  "sampler": {
+    "class": "MarginalizedParticleGibbsSampler",
+    "nsamples": 5000
   },
   "seed": 1337,
   "input": "input/simulation_data.json",
